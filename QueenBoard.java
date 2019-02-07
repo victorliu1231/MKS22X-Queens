@@ -5,10 +5,13 @@ public class QueenBoard{
     board = new int[size][size];
   }
 
-  private boolean addQueen(int r, int c){
+  public boolean addQueen(int r, int c){ //CHANGE TO PRIVATE ACCESS LATER
     //X's out the rows that the queen looks across
     for (int x = 0; x < board.length; x++){
       board[r][x] += 1;
+    }
+    for (int y = 0; y < board.length; y++){
+      board[y][c] += 1;
     }
     board[r][c] = -1;
     return true; //dummy case
@@ -39,6 +42,28 @@ public class QueenBoard{
           ans+= "Q";
         } else {
           ans+= "_";
+        }
+        //this if case makes sure there is no whitespace at the end of rows
+        if (c != board.length - 1){
+          ans+= " ";
+        }
+      }
+      //this if case makes sure there is no new row at the end of parsing
+      if (r != board.length - 1){
+        ans+= "\n";
+      }
+    }
+    return ans;
+  }
+
+  public String toStringUndercover(){
+    String ans = "";
+    for (int r = 0; r < board.length; r++){
+      for (int c = 0; c < board.length; c++){
+        if (board[r][c] == -1){
+          ans+= "Q";
+        } else {
+          ans+= board[r][c];
         }
         //this if case makes sure there is no whitespace at the end of rows
         if (c != board.length - 1){
