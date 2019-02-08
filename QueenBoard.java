@@ -5,7 +5,7 @@ public class QueenBoard{
     board = new int[size][size];
   }
 
-  public boolean addQueen(int r, int c){ //CHANGE TO PRIVATE ACCESS LATER
+  private boolean addQueen(int r, int c){
     //X's out the rows that the queen looks across
     for (int x = 0; x < board.length; x++){
       board[r][x] += 1;
@@ -33,7 +33,33 @@ public class QueenBoard{
     return true;
   }
 
-  private boolean removeQueen(int r, int c){return true;}
+  private boolean removeQueen(int r, int c){
+    //X's out the rows that the queen looks across
+    for (int x = 0; x < board.length; x++){
+      board[r][x] -= 1;
+    }
+    for (int y = 0; y < board.length; y++){
+      board[y][c] -= 1;
+    }
+    int n = 0; //to help increment with diagonals
+    //x < board.length is horizontal restriction, n < board.length is vertical restriction
+    for (int x = c-r; x < board.length && n < board.length; x++){ //x = c-r calculates which column to start the diagonal
+      if (x >= 0){ //doesn't put the increase if the start point is off the board
+        board[n][x] -= 1;
+      }
+      n++;
+    }
+    n = 0;
+    //x >= 0 is horizontal restriction, n < board.length is vertical restriction
+    for (int x = c+r; x >= 0 && n < board.length; x--){ //x = c+r calculates which column to start the diagonal
+      if (x < board.length){ //doesn't put the increase if the start point is off the board
+        board[n][x] -= 1;
+      }
+      n++;
+    }
+    board[r][c] = 0; //since queens will never be placed in positions that are >= 1, it is fine to set (r,c) to be 0
+    return true;
+  }
 
 
   /**
