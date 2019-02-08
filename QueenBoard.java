@@ -1,5 +1,6 @@
 public class QueenBoard{
   private int[][]board;
+  private int numSolutions = 0;
 
   public QueenBoard(int size){
     board = new int[size][size];
@@ -68,11 +69,9 @@ public class QueenBoard{
   *all others are displayed as underscores '_'
   *There are spaces between each symbol:
   *"""_ _ Q _
-  *Q _ _ _
-
-  *_ _ _ Q
-
-  *_ Q _ _"""
+  *   Q _ _ _
+  *   _ _ _ Q
+  *   _ Q _ _"""
   *(pythonic string notation for clarity,
   *excludes the character up to the *)
   */
@@ -98,6 +97,7 @@ public class QueenBoard{
     return ans;
   }
 
+  //prints out the array but with the numbers underneath that make up the data structure of the board
   public String toStringUndercover(){
     String ans = "";
     for (int r = 0; r < board.length; r++){
@@ -124,14 +124,15 @@ public class QueenBoard{
 
   /**
   *@return false when the board is not solveable and leaves the board filled with zeros;
-
   *        true when the board is solveable, and leaves the board in a solved state
-
   *@throws IllegalStateException when the board starts with any non-zero value
-
   */
   public boolean solve(){
-    return true;
+    if (countSolutions() == board.length){
+      return true;
+    } else {
+      for (word)
+    }
   }
 
   /**
@@ -140,6 +141,25 @@ public class QueenBoard{
   */
   public int countSolutions(){
     return -1;
+  }
+
+
+  public static List<String> makeAllWords(int k, int maxLetter){
+    ArrayList<String> l = new ArrayList<>();
+    mawHelp(k, "", l, maxLetter);
+    return l;
+  }
+
+  private static void mawHelp(int k, String word, List l, int maxLetter){
+    if (k == 0){
+      l.add(word);
+    } else {
+      for (int n = 0; n < maxLetter; n++){
+        int letter = 'a'+n;
+        char c = (char)letter;
+        mawHelp(k-1, word+c, l, maxLetter);
+      }
+    }
   }
 
 
