@@ -1,13 +1,24 @@
+import java.util.List;
+import java.util.ArrayList;
+
 public class QueenBoard{
   private int[][]board;
   private int numSolutions = 0;
+  private List<String> perms;
+  private int numQueens = 0;
 
   public QueenBoard(int size){
     board = new int[size][size];
+    perms = makeAllWords(size,1);
   }
 
   private boolean addQueen(int r, int c){
     //X's out the rows that the queen looks across
+    /*for (int i = 0; i < board.length; i++){
+      board[r][c+i] += 1;
+      board[r+i][c+i] += 1;
+      board[r-i][c+i] += 1;
+    }*/
     for (int x = 0; x < board.length; x++){
       board[r][x] += 1;
     }
@@ -128,10 +139,30 @@ public class QueenBoard{
   *@throws IllegalStateException when the board starts with any non-zero value
   */
   public boolean solve(){
-    if (countSolutions() == board.length){
+    boolean isSolved = false;
+    for (int n = 0; n < board.length; n++){
+      isSolved = isSolved || solveHelp(n,0);
+      System.out.println(isSolved);
+      numQueens--;
+      removeQueen(n,0);
+    }
+    return isSolved;
+  }
+
+  public boolean solveHelp(int r, int c){
+    if (numQueens == board.length){
       return true;
     } else {
-      for (word)
+      if (board[r][c] == 0){
+        addQueen(r,c);
+        numQueens++;
+        //System.out.println(toStringUndercover());
+        System.out.println(this);System.out.println();
+        return (solveHelp(0,c+1) || solveHelp(1,c+1) ||
+               solveHelp(2,c+1) || solveHelp(3,c+1)); //goes to next column
+      } else {
+        return false;
+      }
     }
   }
 
