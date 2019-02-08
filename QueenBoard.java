@@ -13,8 +13,24 @@ public class QueenBoard{
     for (int y = 0; y < board.length; y++){
       board[y][c] += 1;
     }
-    board[r][c] = -1;
-    return true; //dummy case
+    int n = 0; //to help increment with diagonals
+    //x < board.length is horizontal restriction, n < board.length is vertical restriction
+    for (int x = c-r; x < board.length && n < board.length; x++){ //x = c-r calculates which column to start the diagonal
+      if (x >= 0){ //doesn't put the increase if the start point is off the board
+        board[n][x] += 1;
+      }
+      n++;
+    }
+    n = 0;
+    //x >= 0 is horizontal restriction, n < board.length is vertical restriction
+    for (int x = c+r; x >= 0 && n < board.length; x--){ //x = c+r calculates which column to start the diagonal
+      if (x < board.length){ //doesn't put the increase if the start point is off the board
+        board[n][x] += 1;
+      }
+      n++;
+    }
+    board[r][c] = -1; //sets position (r,c) to be -1 to indicate queen spot
+    return true;
   }
 
   private boolean removeQueen(int r, int c){return true;}
