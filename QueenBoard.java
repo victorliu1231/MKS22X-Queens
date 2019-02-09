@@ -1,74 +1,47 @@
-import java.util.List;
-import java.util.ArrayList;
-
 public class QueenBoard{
   private int[][]board;
-  private int numSolutions = 0;
-  private List<String> perms;
-  private int numQueens = 0;
+  private int numQueens;
 
   public QueenBoard(int size){
     board = new int[size][size];
-    perms = makeAllWords(size,1);
+    numQueens = 0;
   }
 
+  //queen placement is represented by -1. Squares it stares down have +1 to them
   private boolean addQueen(int r, int c){
-    //X's out the rows that the queen looks across
-    /*for (int i = 0; i < board.length; i++){
-      board[r][c+i] += 1;
-      board[r+i][c+i] += 1;
-      board[r-i][c+i] += 1;
-    }*/
-    for (int x = 0; x < board.length; x++){
-      board[r][x] += 1;
-    }
-    for (int y = 0; y < board.length; y++){
-      board[y][c] += 1;
-    }
-    int n = 0; //to help increment with diagonals
-    //x < board.length is horizontal restriction, n < board.length is vertical restriction
-    for (int x = c-r; x < board.length && n < board.length; x++){ //x = c-r calculates which column to start the diagonal
-      if (x >= 0){ //doesn't put the increase if the start point is off the board
-        board[n][x] += 1;
+    int i = 0; //incrementor for the moving up/down part of diagonals
+    for (int colIndex = c; colIndex < board.length; colIndex++){
+      board[r][colIndex] += 1;
+      if (r+i < board.length){ //makes sure the array doesn't go out of bounds
+        board[r+i][colIndex] += 1;
       }
-      n++;
-    }
-    n = 0;
-    //x >= 0 is horizontal restriction, n < board.length is vertical restriction
-    for (int x = c+r; x >= 0 && n < board.length; x--){ //x = c+r calculates which column to start the diagonal
-      if (x < board.length){ //doesn't put the increase if the start point is off the board
-        board[n][x] += 1;
+      if (r-i >= 0){ //makes sure the array doesn't go out of bounds
+        board[r-i][colIndex] += 1;
       }
-      n++;
+      i++;
     }
-    board[r][c] = -1; //sets position (r,c) to be -1 to indicate queen spot
+    board[r][c] = -1;
+    numQueens++;
     return true;
   }
 
+  //returns true when queen is successfully removed, false when there is no queen at the specified square
   private boolean removeQueen(int r, int c){
-    //X's out the rows that the queen looks across
-    for (int x = 0; x < board.length; x++){
-      board[r][x] -= 1;
+    if (board[r][c] != -1){
+      return false;
     }
-    for (int y = 0; y < board.length; y++){
-      board[y][c] -= 1;
-    }
-    int n = 0; //to help increment with diagonals
-    //x < board.length is horizontal restriction, n < board.length is vertical restriction
-    for (int x = c-r; x < board.length && n < board.length; x++){ //x = c-r calculates which column to start the diagonal
-      if (x >= 0){ //doesn't put the increase if the start point is off the board
-        board[n][x] -= 1;
+    int i = 0; //incrementor for the moving up/down part of diagonals
+    for (int colIndex = c; colIndex < board.length; colIndex++){
+      board[r][colIndex] -= 1;
+      if (r+i < board.length){ //makes sure the array doesn't go out of bounds
+        board[r+i][colIndex] -= 1;
       }
-      n++;
-    }
-    n = 0;
-    //x >= 0 is horizontal restriction, n < board.length is vertical restriction
-    for (int x = c+r; x >= 0 && n < board.length; x--){ //x = c+r calculates which column to start the diagonal
-      if (x < board.length){ //doesn't put the increase if the start point is off the board
-        board[n][x] -= 1;
+      if (r-i >= 0){ //makes sure the array doesn't go out of bounds
+        board[r-i][colIndex] -= 1;
       }
-      n++;
+      i++;
     }
+    numQueens--;
     board[r][c] = 0; //since queens will never be placed in positions that are >= 1, it is fine to set (r,c) to be 0
     return true;
   }
@@ -139,28 +112,34 @@ public class QueenBoard{
   *@throws IllegalStateException when the board starts with any non-zero value
   */
   public boolean solve(){
-    boolean isSolved = false;
-    for (int n = 0; n < board.length; n++){
-      isSolved = isSolved || solveHelp(n,0);
-      System.out.println(isSolved);
-      numQueens--;
-      removeQueen(n,0);
+    for (int r = 0; r < board.length; r++){
+      for (int c = 0; c < board.length; c++){
+        if (board[r][c] != 0){
+          throw new IllegalStateException("Board is not resetted yet! (still has non-zero values in it)");
+        }
+      }
     }
-    return isSolved;
+    for (int n = 0; n < board.length; n++){
+      if (solveHelp(n, 0, n, 0)){
+        return true;
+      }
+      removeQueen(n,0); //to reset the board
+    }
+    return false;
   }
 
-  public boolean solveHelp(int r, int c){
+  private boolean solveHelp(int r, int c, int lastQueenR, int lastQueenC){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
     if (numQueens == board.length){
       return true;
     } else {
-      if (board[r][c] == 0){
+      if (board[r][c] == 0){ //only branches down the tree if it is possible to place a queen here
         addQueen(r,c);
-        numQueens++;
-        //System.out.println(toStringUndercover());
-        System.out.println(this);System.out.println();
-        return (solveHelp(0,c+1) || solveHelp(1,c+1) ||
-               solveHelp(2,c+1) || solveHelp(3,c+1)); //goes to next column
+        return (solveHelp(0,c+1,r,c) || solveHelp(1,c+1,r,c) ||
+               solveHelp(2,c+1,r,c) || solveHelp(3,c+1,r,c)); //goes to next column
       } else {
+        if (r == board.length - 1){ //if we have gone to the last row and there is no spot to place a queen on this column, remove last queen and backtrack
+          removeQueen(lastQueenR, lastQueenC);
+        }
         return false;
       }
     }
@@ -171,27 +150,32 @@ public class QueenBoard{
   *@throws IllegalStateException when the board starts with any non-zero value
   */
   public int countSolutions(){
-    return -1;
-  }
-
-
-  public static List<String> makeAllWords(int k, int maxLetter){
-    ArrayList<String> l = new ArrayList<>();
-    mawHelp(k, "", l, maxLetter);
-    return l;
-  }
-
-  private static void mawHelp(int k, String word, List l, int maxLetter){
-    if (k == 0){
-      l.add(word);
-    } else {
-      for (int n = 0; n < maxLetter; n++){
-        int letter = 'a'+n;
-        char c = (char)letter;
-        mawHelp(k-1, word+c, l, maxLetter);
+    for (int r = 0; r < board.length; r++){
+      for (int c = 0; c < board.length; c++){
+        if (board[r][c] != 0){
+          throw new IllegalStateException("Board is not resetted yet! (still has non-zero values in it)");
+        }
       }
     }
+    int ans = 0;
+    for (int n = 0; n < board.length; n++){
+      if (solveHelp(n, 0, n, 0)){
+        ans++;
+        clear(); //bcuz clear only activates when there is a solution, which is relatively rare, the average case runtime isn't as big as it seems
+      } else {
+        removeQueen(n,0);
+      }
+    }
+    return ans;
   }
 
+  private void clear(){
+    for (int r = 0; r < board.length; r++){
+      for (int c = 0; c < board.length; c++){
+        board[r][c] = 0;
+      }
+    }
+    numQueens = 0;
+  }
 
 }
