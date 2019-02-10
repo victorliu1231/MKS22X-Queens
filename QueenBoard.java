@@ -7,7 +7,9 @@ public class QueenBoard{
     numQueens = 0;
   }
 
-  //queen placement is represented by -1. Squares it stares down have +1 to them
+  //Queen placement is represented by -1. Squares it stares down have +1 to them.
+  //Don't need to add +1 to squares left of queen placement since implementation of code will never call addQueen in situations
+  //where you need to test if a queen can be added left of another queen
   private boolean addQueen(int r, int c){
     int i = 0; //incrementor for the moving up/down part of diagonals
     for (int colIndex = c; colIndex < board.length; colIndex++){
@@ -19,6 +21,9 @@ public class QueenBoard{
         board[r-i][colIndex] += 1;
       }
       i++;
+    }
+    for (int rowIndex = 0; rowIndex < board.length; rowIndex++){
+      board[rowIndex][c] += 1;
     }
     board[r][c] = -1;
     numQueens++;
@@ -40,6 +45,9 @@ public class QueenBoard{
         board[r-i][colIndex] -= 1;
       }
       i++;
+    }
+    for (int rowIndex = 0; rowIndex < board.length; rowIndex++){
+      board[rowIndex][c] -= 1;
     }
     numQueens--;
     board[r][c] = 0; //since queens will never be placed in positions that are >= 1, it is fine to set (r,c) to be 0
@@ -120,28 +128,29 @@ public class QueenBoard{
       }
     }
     for (int n = 0; n < board.length; n++){
-      if (solveHelp(n, 0, n, 0)){
+      if (solveHelp(n, 0, n, 0, false)){
         return true;
       }
-      removeQueen(n,0); //to reset the board
+      removeQueen(n,0); //to reset the board if solveHelp is false
     }
     return false;
   }
 
-  private boolean solveHelp(int r, int c, int lastQueenR, int lastQueenC){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
+  public boolean solveHelp(int r, int c, int lastQueenR, int lastQueenC, boolean isSolved){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
     if (numQueens == board.length){
       return true;
     } else {
       if (board[r][c] == 0){ //only branches down the tree if it is possible to place a queen here
         addQueen(r,c);
-        return (solveHelp(0,c+1,r,c) || solveHelp(1,c+1,r,c) ||
-               solveHelp(2,c+1,r,c) || solveHelp(3,c+1,r,c)); //goes to next column
-      } else {
-        if (r == board.length - 1){ //if we have gone to the last row and there is no spot to place a queen on this column, remove last queen and backtrack
-          removeQueen(lastQueenR, lastQueenC);
+        for (int n = 0; n < board.length; n++){
+          isSolved = isSolved || solveHelp(n, c+1, r, c, isSolved); //goes to next column
         }
-        return false;
-      }
+        if (!isSolved){
+          removeQueen(r,c);
+        }
+        return isSolved;
+      } 
+      return false;
     }
   }
 
@@ -159,8 +168,9 @@ public class QueenBoard{
     }
     int ans = 0;
     for (int n = 0; n < board.length; n++){
-      if (solveHelp(n, 0, n, 0)){
+      if (solveHelp(n, 0, n, 0, false)){
         ans++;
+        //System.out.println(this); System.out.println();
         clear(); //bcuz clear only activates when there is a solution, which is relatively rare, the average case runtime isn't as big as it seems
       } else {
         removeQueen(n,0);
