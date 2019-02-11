@@ -130,7 +130,7 @@ public class QueenBoard{
       }
     }
     for (int n = 0; n < board.length; n++){
-      if (solveHelp(n, 0, n, 0, false)){
+      if (solveHelp(n, 0, false)){
         return true;
       }
       removeQueen(n,0); //to reset the board if solveHelp is false
@@ -139,14 +139,14 @@ public class QueenBoard{
   }
 
   //for the solve() method, return type is boolean
-  public boolean solveHelp(int r, int c, int lastQueenR, int lastQueenC, boolean isSolved){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
+  public boolean solveHelp(int r, int c, boolean isSolved){
     if (numQueens == board.length){
       return true;
     } else {
       if (board[r][c] == 0){ //only branches down the tree if it is possible to place a queen here
         addQueen(r,c);
         for (int n = 0; n < board.length; n++){
-          isSolved = isSolved || solveHelp(n, c+1, r, c, isSolved); //goes to next column
+          isSolved = isSolved || solveHelp(n, c+1, isSolved); //goes to next column
         }
         if (!isSolved){
           removeQueen(r,c);
