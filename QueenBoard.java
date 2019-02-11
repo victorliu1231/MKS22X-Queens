@@ -1,6 +1,7 @@
 public class QueenBoard{
   private int[][]board;
   private int numQueens;
+  private int numSolutions;
 
   public QueenBoard(int size){
     board = new int[size][size];
@@ -136,6 +137,7 @@ public class QueenBoard{
     return false;
   }
 
+  //for the solve() method, return type is boolean
   public boolean solveHelp(int r, int c, int lastQueenR, int lastQueenC, boolean isSolved){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
     if (numQueens == board.length){
       return true;
@@ -154,6 +156,36 @@ public class QueenBoard{
     }
   }
 
+  //for the countSolutions method, return type is int
+  public void solveHelp(int r, int c, int lastQueenR, int lastQueenC){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
+    if (numQueens == board.length && r == board.length - 1){
+      removeQueen(lastQueenR, lastQueenC);
+      numSolutions++;
+      return;
+    } else {
+      if (c < board.length && board[r][c] == 0){ //utilizes short circuiting; only branches down the tree if it is possible to place a queen here
+        addQueen(r,c);
+        int memory = numSolutions;
+        for (int n = 0; n < board.length; n++){
+          solveHelp(n, c+1, r, c); //goes to next column
+        }
+        if (numSolutions == memory){ //if the new number of solutions is same as the old #, that means this path produced no new solutions, so backtrack
+          removeQueen(r,c);
+        }
+        if (r == board.length-1){
+          removeQueen(lastQueenR, lastQueenC);
+        }
+        //System.out.println("here is an empty queen spot");
+        return;
+      }
+      if (r == board.length - 1){
+        removeQueen(lastQueenR, lastQueenC);
+        //System.out.println("here is where I remove a queen");
+      }
+      return;
+    }
+  }
+
   /**
   *@return the number of solutions found, and leaves the board filled with only 0's
   *@throws IllegalStateException when the board starts with any non-zero value
@@ -167,16 +199,11 @@ public class QueenBoard{
       }
     }
     int ans = 0;
-    for (int n = 0; n < board.length; n++){
-      if (solveHelp(n, 0, n, 0, false)){
-        ans++;
-        //System.out.println(this); System.out.println();
-        clear(); //bcuz clear only activates when there is a solution, which is relatively rare, the average case runtime isn't as big as it seems
-      } else {
-        removeQueen(n,0);
-      }
+    for (int n = 0; n < board.length; n++){//board.length; n++){
+      solveHelp(n, 0, n, 0);
+      clear(); //bcuz clear only activates when there is a solution, which is relatively rare, the average case runtime isn't as big as it seems
     }
-    return ans;
+    return numSolutions;
   }
 
   private void clear(){
