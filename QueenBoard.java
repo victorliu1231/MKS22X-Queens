@@ -6,6 +6,7 @@ public class QueenBoard{
   public QueenBoard(int size){
     board = new int[size][size];
     numQueens = 0;
+    numSolutions = 0;
   }
 
   //Queen placement is represented by -1. Squares it stares down have +1 to them.
@@ -156,10 +157,32 @@ public class QueenBoard{
     }
   }
 
-  //for the countSolutions method, return type is int
+
+
+  /**
+  *@return the number of solutions found, and leaves the board filled with only 0's
+  *@throws IllegalStateException when the board starts with any non-zero value
+  */
+  public int countSolutions(){
+    numSolutions = 0;
+    for (int r = 0; r < board.length; r++){
+      for (int c = 0; c < board.length; c++){
+        if (board[r][c] != 0){
+          throw new IllegalStateException("Board is not resetted yet! (still has non-zero values in it)");
+        }
+      }
+    }
+    for (int n = 0; n < board.length; n++){
+      solveHelp(n, 0, n, 0);
+      clear(); //bcuz clear only activates when there is a solution, which is relatively rare, the average case runtime isn't as big as it seems
+    }
+    return numSolutions;
+  }
+
+  //for the countSolutions method, modifies numSolutions variable
   public void solveHelp(int r, int c, int lastQueenR, int lastQueenC){ //lastQueenR and lastQueenC stores the memory of the last placed queen's position
     if (numQueens == board.length && r == board.length - 1){
-      removeQueen(lastQueenR, lastQueenC);
+      removeQueen(lastQueenR, lastQueenC); //backtracks and adds a solution when you find a working configuration
       numSolutions++;
       return;
     } else {
@@ -169,41 +192,16 @@ public class QueenBoard{
         for (int n = 0; n < board.length; n++){
           solveHelp(n, c+1, r, c); //goes to next column
         }
-        if (numSolutions == memory){ //if the new number of solutions is same as the old #, that means this path produced no new solutions, so backtrack
+        if (numSolutions == memory){ //if the new number of solutions is same as the old # before going to the new column, that means the current column produced no new solutions, so backtrack
           removeQueen(r,c);
         }
-        if (r == board.length-1){
-          removeQueen(lastQueenR, lastQueenC);
-        }
-        //System.out.println("here is an empty queen spot");
-        return;
       }
-      if (r == board.length - 1){
+
+      if (r == board.length - 1){ //if you are finished parsing through the column, then backtrack to explore any new solutions
         removeQueen(lastQueenR, lastQueenC);
-        //System.out.println("here is where I remove a queen");
       }
       return;
     }
-  }
-
-  /**
-  *@return the number of solutions found, and leaves the board filled with only 0's
-  *@throws IllegalStateException when the board starts with any non-zero value
-  */
-  public int countSolutions(){
-    for (int r = 0; r < board.length; r++){
-      for (int c = 0; c < board.length; c++){
-        if (board[r][c] != 0){
-          throw new IllegalStateException("Board is not resetted yet! (still has non-zero values in it)");
-        }
-      }
-    }
-    int ans = 0;
-    for (int n = 0; n < board.length; n++){//board.length; n++){
-      solveHelp(n, 0, n, 0);
-      clear(); //bcuz clear only activates when there is a solution, which is relatively rare, the average case runtime isn't as big as it seems
-    }
-    return numSolutions;
   }
 
   private void clear(){

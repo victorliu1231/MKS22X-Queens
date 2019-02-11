@@ -72,11 +72,16 @@ public class VDriver{
     q8 = new QueenBoard(8);
     System.out.println("Should be 92 solutions for the 8x8 board: "); System.out.println(q8.countSolutions());
     */
-
+    /*
     QueenBoard q10 = new QueenBoard(10);
     System.out.println(q10.solve()); System.out.println(q10);
     q10 = new QueenBoard(10);
     System.out.println(q10.countSolutions()); System.out.println(q10);
+    */
+    /*
+    QueenBoard q16 = new QueenBoard(16);
+    System.out.println(q16.countSolutions());
+    */
   }
   //i have tested zero sized boards... now to test other sized boards
 }
