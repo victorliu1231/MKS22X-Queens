@@ -65,13 +65,17 @@ public class VDriver{
     //q5 = new QueenBoard(5);
     System.out.println("Should be 10 solutions for the 5x5 board: "); System.out.println(q5.countSolutions());
     */
-    /*
-    QueenBoard q8 = new QueenBoard(8);
-    System.out.println(q8.toStringUndercover());
-    System.out.println("Should be true for the 8x8 board: "); System.out.println(q8.solve()); System.out.println(q8);
-    q8 = new QueenBoard(8);
-    System.out.println("Should be 92 solutions for the 8x8 board: "); System.out.println(q8.countSolutions());
-    */
+    
+    QueenBoard q14 = new QueenBoard(14);
+    System.out.println("Should be true for the 14x14 board: "); System.out.println(q14.solve()); System.out.println(q14);
+    q14 = new QueenBoard(14);
+    System.out.println("Should be 365596 solutions for the 8x8 board: "); 
+    long startMS = System.currentTimeMillis();
+    System.out.println(q14.countSolutions());
+    long endMS = System.currentTimeMillis();
+    long diffMS = endMS - startMS;
+    System.out.println("numSeconds: "+diffMS/1000.0);
+    
     /*
     QueenBoard q10 = new QueenBoard(10);
     System.out.println(q10.solve()); System.out.println(q10);
@@ -82,6 +86,9 @@ public class VDriver{
     QueenBoard q16 = new QueenBoard(16);
     System.out.println(q16.countSolutions());
     */
+    QueenBoard q0 = new QueenBoard(0);
+    System.out.println(q0.countSolutions());
+    System.out.println(q0.solve());
   }
   //i have tested zero sized boards... now to test other sized boards
 }

@@ -122,6 +122,9 @@ public class QueenBoard{
   *@throws IllegalStateException when the board starts with any non-zero value
   */
   public boolean solve(){
+    if (board.length == 0){ //0x0 board has 1 way to place 0 queens
+      return true;
+    }
     for (int r = 0; r < board.length; r++){
       for (int c = 0; c < board.length; c++){
         if (board[r][c] != 0){
@@ -164,6 +167,9 @@ public class QueenBoard{
   *@throws IllegalStateException when the board starts with any non-zero value
   */
   public int countSolutions(){
+    if (board.length == 0){
+      return 1; //0x0 board has 1 way to place 0 queens
+    }
     numSolutions = 0;
     for (int r = 0; r < board.length; r++){
       for (int c = 0; c < board.length; c++){
